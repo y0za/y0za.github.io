@@ -34,7 +34,7 @@ fatal: [ubuntu-test]: FAILED! => {"changed": false, "failed": true, "module_stde
     - name: Install python-simplejson
       raw: sudo apt-get -y install python-simplejson
   roles:
-    - some_sole
+    - some_role
 ```
 
 上記の方法により実行するtaskより先にPython2をインストールすることが出来るのだが、`gather_facts`を切ったことにより`ansible_os_family`などの変数が使用できなくなる。  
@@ -51,7 +51,7 @@ fatal: [ubuntu-test]: FAILED! => {"changed": false, "failed": true, "module_stde
     - name: Gathers facts
       setup:
   roles:
-    - some_sole
+    - some_role
 ```
 
 これでUbuntu 16.04でも問題なくAnsibleを実行できた。
