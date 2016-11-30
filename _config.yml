@@ -16,9 +16,13 @@ author:
 google-analytics:
   id:               "UA-86917545-1"
 
+# Disqus
+disqus:
+  id:               "y0za-blog"
+
 # URL
-url:                "https://y0za.github.io" # the base hostname & protocol for your site
-# url:                "http://localhost:4000" # use this url when develop
+# url:                "https://y0za.github.io" # the base hostname & protocol for your site
+url:                "http://localhost:4000" # use this url when develop
 baseurl:            "" # the subpath of your site, e.g. /blog
 
 
