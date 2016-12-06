@@ -6,12 +6,12 @@
 
 html {
   font-family: $base-font;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 1.6;
 
   @media (min-width: 38em) {
-    font-size: 20px;
+    font-size: 16px;
   }
 }
 
