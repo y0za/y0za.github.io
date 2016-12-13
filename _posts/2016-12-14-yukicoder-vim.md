@@ -38,12 +38,14 @@ yukicoderでは[様々なプログラミング言語](http://yukicoder.me/help/e
 2つ目はまさかの同じAdvent Calendar 3日目のaueweさんの記事。入力をパイプで受け取って`-e`のオプションでコマンドを実行しています。標準入力も標準出力も扱えて良いのですが、パイプでの処理を前提としているのでこのままだとyukicoderで使うには少し扱いづらいです。  
 3つ目はthincaさんの記事。AtCoderというyukicoderとは別の競技プログラミングのコンテストサイト向けにVim scriptを実行するための方法が書かれていて、まさに知りたかったことが載っていました。今回はこの記事を参考にして(パクって)起動用のコマンド等を用意することに...  
 
-実際にできた起動コマンドがこちら
+実際にできた起動コマンドがこちら  
+
 ```sh
 vim -u NONE -i NONE -X -N -n -e -s -S _filename_ /dev/stdin -c qa!
 ```
 
 各起動オプションの説明
+
 - `-X` X serverに接続しない
 - `-N` nocompatibleに設定
 - `-u NONE` 設定ファイルや環境変数による初期化を行わない
@@ -64,7 +66,8 @@ vim -u NONE -i NONE -X -N -n -e -s -S _filename_ /dev/stdin -c qa!
 試しに[簡単そうな問題を20問ほど解いた](https://yukicoder.me/users/27/submissions?lang_id=vim&status=AC&date_asc=enabled)ので、その中からいくつかピックアップ。
 
 ### [No.9002 FizzBuzz](https://yukicoder.me/problems/no/9002)
-ただのFizzBuzz
+ただのFizzBuzz  
+
 ```vim
 function! s:main(input) abort
   let result = []
@@ -89,28 +92,34 @@ enew
 put =s:main(s:input)
 2,$print
 ```
+
 [実際の提出](https://yukicoder.me/submissions/137342)  
 
 先ほど説明したとおり、入力をバッファからgetlineで取得して、出力は新たにバッファを作成して一旦そこに吐き出してから出力しています。  
-実行する場合は、
+実行する場合は、  
+
 ```sh
 echo '100' | vim -u NONE -i NONE -X -N -n -e -s -S fizzbuzz.vim /dev/stdin -c qa!
 ```
+
 こんな感じで入力をパイプで渡してやればよいです。
 
 ### [No.163 cAPSlOCK](https://yukicoder.me/problems/no/163)
-大文字を小文字に、小文字を大文字にする問題
+大文字を小文字に、小文字を大文字にする問題  
+
 ```vim
 norm V~
 p
 ```
+
 [実際の提出](https://yukicoder.me/submissions/138246)  
 
 この問題ではあえて出力用のバッファを作らずに入力用のバッファを編集したものを出力しています。やっていることはnormalコマンドで行選択して大文字小文字を反転させているだけです。  
 yukicoderでは他の人の解答も見ることができ、その一覧をコード長順でソートすることができます。この機能を使ってコードゴルフっぽく遊ぶことができ、この解答は[最短コード長を狙ってとったもの](https://yukicoder.me/problems/no/163/submissions?lang_id=&status=AC&sort_length=enabled)(執筆時点)です。Vim scriptでBashやPerlやRuby等の言語に勝てると非常に気持ち良いので、最短コード長を目指してやってみるのもいいと思います。
 
 ### [No.3 ビットすごろく](https://yukicoder.me/problems/no/3)
-スタートからゴールのマスまで1から順に数字が振られていて、現在いるマスの数字を2進数で表現した時の1のビットの数だけ前後に移動でき、ゴールまで最短何回の移動でたどり着けるか、という問題
+スタートからゴールのマスまで1から順に数字が振られていて、現在いるマスの数字を2進数で表現した時の1のビットの数だけ前後に移動でき、ゴールまで最短何回の移動でたどり着けるか、という問題  
+
 ```vim
 function! s:output()
   let this = {'lines': []}
@@ -166,6 +175,7 @@ enew
 put =s:main(s:input)
 2,$print
 ```
+
 [実際の提出](https://yukicoder.me/submissions/138028)  
 
 競技プログラミングをやったことない人だとちょっと難しく感じるかもしれませんが、この問題は幅優先探索というアルゴリズムで解くことができます。制約がシビアな問題だと実行速度的にVim scriptでは解けない(制限時間内に処理が終わらない)問題もあると思いますが、この程度のちょっとした幅優先探索の問題ならばVim scriptでも問題なく解けます。
