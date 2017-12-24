@@ -245,7 +245,7 @@ type txdata struct {
 	}
 ```
 
-パスフレーズと先程のchainIDを用いてトランザクションに署名を行います。  
+先程のchainIDを用いてトランザクションに署名を行います。  
 gethの中には`Wallet`の実装として`keystore`と`usbwallet`の2種類あって、`keystore`ものではバリデーションと以下の処理が行われています。
 
 [/accounts/keystore/keystore.go#L270,L285](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/accounts/keystore/keystore.go#L270,L285)
