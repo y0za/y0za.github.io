@@ -157,7 +157,7 @@ func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
 
 `Gas`のデフォルト値である`defaultGas`は同じファイル内に定義されていて`defaultGas = 90000`となっています。  
 `GasPrice`のデフォルト値に使用されている`b.SuggestPrice(ctx)`はコードを辿ると[/eth/gasprice/gasprice.go#L75,L147](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/eth/gasprice/gasprice.go#L75,L147)に実際の処理が書いてあるので、気になった方はそちらを見てみて下さい。(これ以外にLESの実装もあります)  
-`Value`のデフォルト値は`hexutil.Big`のゼロ値のポインタなっていますね。ちなみに`hexutl.Big`とは`math/big`の`Int`に別名を設けたもので、JSONにしたときに16進数として扱われるようにメソッドがいくつか生えています。  
+`Value`のデフォルト値は`hexutil.Big`のゼロ値のポインタなっていますね。ちなみに`hexutil.Big`とは`math/big`の`Int`に別名を設けたもので、JSONにしたときに16進数として扱われるようにメソッドがいくつか生えています。  
 `Nonce`のデフォルト値には`b.GetPoolNonce(ctx, atgs.From)`が使用されていて、送信元アドレスに対応するアカウントのNonceを取得しています。  
 `Data`と`Input`の両方が指定されている場合に値が異なるとエラーとなるようです。
 
