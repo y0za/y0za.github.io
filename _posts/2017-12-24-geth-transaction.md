@@ -15,7 +15,7 @@ Ethereumのトランザクションへの理解を深めるために[go-ethereum
 実際に読んだのはJSON-RPCで[eth_sendTransaction](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendtransaction)を呼び出した際に内部で実行されるコードで、以下のものがそれに該当するメソッドとなります。
 
 [/internal/ethapi/api.go#L1141,L1176](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/internal/ethapi/api.go#L1141,L1176)
-```golang
+```go
 // SendTransaction creates a transaction for the given argument, sign it and submit it to the
 // transaction pool.
 func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args SendTxArgs) (common.Hash, error) {
@@ -57,7 +57,7 @@ func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args Sen
 第2引数の`SendTxArgs`は以下のstructとなっていて、APIを叩く際に指定したパラメータが入ったものが渡されます。
 
 [/internal/ethapi/api.go#L1067,L1079](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/internal/ethapi/api.go#L1067,L1079)
-```golang
+```go
 // SendTxArgs represents the arguments to sumbit a new transaction into the transaction pool.
 type SendTxArgs struct {
 	From     common.Address  `json:"from"`
@@ -82,7 +82,7 @@ type SendTxArgs struct {
 
 ### Wallet取得
 
-```golang
+```go
 	// Look up the wallet containing the requested signer
 	account := accounts.Account{Address: args.From}
 
@@ -98,7 +98,7 @@ type SendTxArgs struct {
 
 ### Nonce排他制御
 
-```golang
+```go
 	if args.Nonce == nil {
 		// Hold the addresse's mutex around signing to prevent concurrent assignment of
 		// the same nonce to multiple accounts.
@@ -114,7 +114,7 @@ type SendTxArgs struct {
 
 ### パラメータのデフォルト値設定
 
-```golang
+```go
 	// Set some sanity defaults and terminate on failure
 	if err := args.setDefaults(ctx, s.b); err != nil {
 		return common.Hash{}, err
@@ -125,7 +125,7 @@ type SendTxArgs struct {
 `args.setDefaults`の中身は以下の通り。
 
 [/internal/ethapi/api.go#L1081,L1107](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/internal/ethapi/api.go#L1081,L1107)
-```golang
+```go
 // setDefaults is a helper function that fills in default values for unspecified tx fields.
 func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
 	if args.Gas == nil {
@@ -165,7 +165,7 @@ func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
 
 ### トランザクション作成
 
-```golang
+```go
 	// Assemble the transaction and sign with the wallet
 	tx := args.toTransaction()
 ```
@@ -174,7 +174,7 @@ func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
 `args.toTransaction`の中身は以下の通りです。
 
 [/internal/ethapi/api.go#L1109,L1120](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/internal/ethapi/api.go#L1109,L1120)
-```golang
+```go
 func (args *SendTxArgs) toTransaction() *types.Transaction {
 	var input []byte
 	if args.Data != nil {
@@ -194,7 +194,7 @@ func (args *SendTxArgs) toTransaction() *types.Transaction {
 `types.Transaction`は以下のstructとなっています。
 
 [/core/types/transaction.go#L49,L72](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/core/types/transaction.go#L49,L72)
-```golang
+```go
 type Transaction struct {
 	data txdata
 	// caches
@@ -225,7 +225,7 @@ type txdata struct {
 
 ### chainIDの取得
 
-```golang
+```go
 	var chainID *big.Int
 	if config := s.b.ChainConfig(); config.IsEIP155(s.b.CurrentBlock().Number()) {
 		chainID = config.ChainId
@@ -238,7 +238,7 @@ type txdata struct {
 
 ### 署名
 
-```golang
+```go
 	signed, err := wallet.SignTx(account, tx, chainID)
 	if err != nil {
 		return common.Hash{}, err
@@ -249,7 +249,7 @@ type txdata struct {
 gethの中には`Wallet`の実装として`keystore`と`usbwallet`の2種類あって、`keystore`ものではバリデーションと以下の処理が行われています。
 
 [/accounts/keystore/keystore.go#L270,L285](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/accounts/keystore/keystore.go#L270,L285)
-```golang
+```go
 // SignTx signs the given transaction with the requested account.
 func (ks *KeyStore) SignTx(a accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
 	// Look up the key to sign with and abort if it cannot be found
@@ -275,7 +275,7 @@ func (ks *KeyStore) SignTx(a accounts.Account, tx *types.Transaction, chainID *b
 
 ### トランザクションプールに投入
 
-```golang
+```go
 	return submitTransaction(ctx, s.b, signed)
 ```
 
@@ -283,7 +283,7 @@ func (ks *KeyStore) SignTx(a accounts.Account, tx *types.Transaction, chainID *b
 `submitTransaction`の中身は以下の通り。
 
 [/internal/ethapi/api.go#L1122,L1139](https://github.com/ethereum/go-ethereum/blob/9d187f02389ba12493112c7feb15a83f44e3a3ff/internal/ethapi/api.go#L1122,L1139)
-```golang
+```go
 // submitTransaction is a helper function that submits tx to txPool and logs a message.
 func submitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (common.Hash, error) {
 	if err := b.SendTx(ctx, tx); err != nil {
